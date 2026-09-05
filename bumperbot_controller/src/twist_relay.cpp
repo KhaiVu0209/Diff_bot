@@ -14,13 +14,6 @@ public:
         );
         controller_pub_ = this->create_publisher<geometry_msgs::msg::TwistStamped>(
             "/bumperbot_controller/cmd_vel", 10);
-        joy_sub_ = this->create_subscription<geometry_msgs::msg::TwistStamped>(
-            "/input_joy/cmd_vel_stamped",
-            10,
-            std::bind(&TwistRelayNode::joy_twist_callback, this, std::placeholders::_1)
-        );
-        joy_pub_ = this->create_publisher<geometry_msgs::msg::Twist>(
-            "/input_joy/cmd_vel", 10);
     }
 
 private:
@@ -32,17 +25,8 @@ private:
         controller_pub_->publish(twist_stamped);
     }
 
-    void joy_twist_callback(const geometry_msgs::msg::TwistStamped::SharedPtr msg)
-    {
-        geometry_msgs::msg::Twist twist;
-        twist = msg->twist;
-        joy_pub_->publish(twist);
-    }
-
     rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr controller_sub_;
     rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr controller_pub_;
-    rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr joy_sub_;
-    rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr joy_pub_;
 };
 
 int main(int argc, char * argv[])

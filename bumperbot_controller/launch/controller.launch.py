@@ -1,5 +1,8 @@
+import os
+
+from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, GroupAction, OpaqueFunction
+from launch.actions import DeclareLaunchArgument, GroupAction, IncludeLaunchDescription, OpaqueFunction
 from launch_ros.actions import Node
 from launch.substitutions import LaunchConfiguration
 from launch.conditions import UnlessCondition, IfCondition
@@ -50,6 +53,10 @@ def generate_launch_description():
         "use_simple_controller",
         default_value="True",
     )
+    use_keyboard_teleop_arg = DeclareLaunchArgument(
+        "use_keyboard_teleop",
+        default_value="True",
+    )
     use_python_arg = DeclareLaunchArgument(
         "use_python",
         default_value="False",
@@ -73,6 +80,7 @@ def generate_launch_description():
     
     use_sim_time = LaunchConfiguration("use_sim_time")
     use_simple_controller = LaunchConfiguration("use_simple_controller")
+    use_keyboard_teleop = LaunchConfiguration("use_keyboard_teleop")
     use_python = LaunchConfiguration("use_python")
     wheel_radius = LaunchConfiguration("wheel_radius")
     wheel_separation = LaunchConfiguration("wheel_separation")
@@ -131,10 +139,23 @@ def generate_launch_description():
 
     noisy_controller_launch = OpaqueFunction(function=noisy_controller)
 
+    keyboard_teleop_launch = IncludeLaunchDescription(
+        os.path.join(
+            get_package_share_directory("bumperbot_controller"),
+            "launch",
+            "keyboard_teleop.launch.py",
+        ),
+        launch_arguments={
+            "use_sim_time": use_sim_time,
+        }.items(),
+        condition=IfCondition(use_keyboard_teleop),
+    )
+
     return LaunchDescription(
         [
             use_sim_time_arg,
             use_simple_controller_arg,
+            use_keyboard_teleop_arg, # nho tat kh trung voi bringup
             use_python_arg,
             wheel_radius_arg,
             wheel_separation_arg,
@@ -144,5 +165,6 @@ def generate_launch_description():
             wheel_controller_spawner,
             simple_controller,
             noisy_controller_launch,
+            keyboard_teleop_launch, # nho tat kh trung voi bringup
         ]
     )

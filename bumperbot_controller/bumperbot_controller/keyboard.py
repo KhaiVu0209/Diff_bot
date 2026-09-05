@@ -27,8 +27,10 @@ class KeyboardTeleop(Node):
         # Parameters
         # ==========================================
 
-        self.declare_parameter('linear_speed', 0.1)
-        self.declare_parameter('angular_speed', 0.5)
+        self.declare_parameter('linear_speed', 0.3)
+        self.declare_parameter('angular_speed', 1.0)
+        self.declare_parameter('linear_acceleration', 0.4)
+        self.declare_parameter('key_timeout', 0.6)
 
         self.linear_speed = self.get_parameter(
             'linear_speed'
@@ -37,6 +39,12 @@ class KeyboardTeleop(Node):
         self.angular_speed = self.get_parameter(
             'angular_speed'
         ).value
+        self.linear_acceleration = self.get_parameter(
+            'linear_acceleration'
+        ).value
+        self.key_timeout = self.get_parameter('key_timeout').value
+        self.current_linear_speed = 0.0
+        self.last_publish_time = time.monotonic()
 
         # ==========================================
         # Các phím đang được giữ
@@ -44,7 +52,7 @@ class KeyboardTeleop(Node):
 
         self.keys_pressed = set()
         self.keys_lock = threading.Lock()
-        self.last_key_time = 0.0
+        self.key_last_times = {}
         self.keyboard_stop = threading.Event()
         self.keyboard_thread = threading.Thread(
             target=self.read_keyboard,
@@ -121,7 +129,7 @@ class KeyboardTeleop(Node):
                 if char in ['w', 's', 'a', 'd']:
                     with self.keys_lock:
                         self.keys_pressed.add(char)
-                        self.last_key_time = time.monotonic()
+                        self.key_last_times[char] = time.monotonic()
                 elif char == 'q':
                     self.get_logger().info('Quit keyboard teleop')
                     self.keyboard_stop.set()
@@ -140,10 +148,18 @@ class KeyboardTeleop(Node):
     def publish_cmd_vel(self):
 
         msg = Twist()
+        current_time = time.monotonic()
+        period = min(current_time - self.last_publish_time, 0.1)
+        self.last_publish_time = current_time
 
         with self.keys_lock:
-            if time.monotonic() - self.last_key_time > 0.5:
-                self.keys_pressed.clear()
+            expired_keys = {
+                key for key, last_time in self.key_last_times.items()
+                if current_time - last_time > self.key_timeout
+            }
+            self.keys_pressed.difference_update(expired_keys)
+            for key in expired_keys:
+                self.key_last_times.pop(key, None)
             keys_pressed = set(self.keys_pressed)
 
         # ==========================================
@@ -151,13 +167,20 @@ class KeyboardTeleop(Node):
         # ==========================================
 
         if 'w' in keys_pressed:
-            msg.linear.x = self.linear_speed
+            target_linear_speed = self.linear_speed
 
         elif 's' in keys_pressed:
-            msg.linear.x = -self.linear_speed
+            target_linear_speed = -self.linear_speed
 
         else:
-            msg.linear.x = 0.0
+            target_linear_speed = 0.0
+
+        self.current_linear_speed = self.move_towards(
+            self.current_linear_speed,
+            target_linear_speed,
+            self.linear_acceleration * period
+        )
+        msg.linear.x = self.current_linear_speed
 
         # ==========================================
         # Angular velocity
@@ -177,6 +200,13 @@ class KeyboardTeleop(Node):
         # ==========================================
 
         self.publisher.publish(msg)
+
+    @staticmethod
+    def move_towards(current_value, target_value, maximum_step):
+        difference = target_value - current_value
+        if abs(difference) <= maximum_step:
+            return target_value
+        return current_value + maximum_step if difference > 0 else current_value - maximum_step
 
     # ==========================================
     # Stop robot
