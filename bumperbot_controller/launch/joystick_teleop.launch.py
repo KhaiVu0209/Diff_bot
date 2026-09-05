@@ -31,7 +31,7 @@ def generate_launch_description():
         parameters=[os.path.join(get_package_share_directory("bumperbot_controller"), "config", "joy_config.yaml"),
                     {"use_sim_time": LaunchConfiguration("use_sim_time")}]
     )
-    
+
     twist_mux_launch = IncludeLaunchDescription(
         os.path.join(
             get_package_share_directory("twist_mux"),
