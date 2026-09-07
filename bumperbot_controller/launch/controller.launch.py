@@ -155,7 +155,7 @@ def generate_launch_description():
         [
             use_sim_time_arg,
             use_simple_controller_arg,
-            use_keyboard_teleop_arg, # nho tat kh trung voi bringup
+            # use_keyboard_teleop_arg, # nho tat kh trung voi bringup
             use_python_arg,
             wheel_radius_arg,
             wheel_separation_arg,
@@ -165,6 +165,6 @@ def generate_launch_description():
             wheel_controller_spawner,
             simple_controller,
             noisy_controller_launch,
-            keyboard_teleop_launch, # nho tat kh trung voi bringup
+            # keyboard_teleop_launch, # nho tat kh trung voi bringup
         ]
     )

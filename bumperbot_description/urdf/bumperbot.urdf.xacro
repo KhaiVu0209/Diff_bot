@@ -179,7 +179,7 @@
       <geometry>
         <mesh filename="package://bumperbot_description/meshes/imu_link.STL" />
       </geometry>
-      <material name="blue"/>
+      <material name="red"/>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -209,7 +209,7 @@
       <geometry>
         <mesh filename="package://bumperbot_description/meshes/laser_link.STL" />
       </geometry>
-      <material name="dark_grey"/>
+      <material name="gold"/>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -237,6 +237,13 @@
   </material>
   <material name="dark_grey">
     <color rgba="0.3 0.3 0.3 1"/>
+  </material>
+  <material name="gold">
+    <color rgba="1 0.84 0 1"/>
+  </material>
+  <material name="red">
+    <color rgba="1 0 0 1"/>
+
   </material>
 
 </robot>
