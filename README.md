@@ -1,16 +1,8 @@
-[![LinkedIn][linkedin-shield]][linkedin-url]
-[![Udemy][udemy-shield]][udemy-url]
+
 
 <p align="center">
   <img src="media/BumperBot.png" alt="Logo" width="450">
 </p>
-
-Bumperbot is an open-source 3D printed self-driving robot powered by ROS 2. Its simple design and low cost make it an excellent learning platform, featured in the following online courses:
-* [Self Driving and ROS 2 - Learn by Doing! Odometry & Control
-](https://www.udemy.com/course/self-driving-and-ros-2-learn-by-doing-odometry-control/?referralCode=50BCC4E84DB2DB09BFB3)
-* [Self Driving and ROS 2 - Learn by Doing! Map & Localization
-](https://www.udemy.com/course/self-driving-and-ros-2-learn-by-doing-map-localization/?referralCode=8FC4AC725C57F7A93F79)
-* [Self Driving and ROS 2 - Learn by Doing! Plan & Navigation](https://www.udemy.com/course/self-driving-and-ros-2-learn-by-doing-plan-navigation/?referralCode=1F6AFF9E9A8E7D5D057A)
 
 ## :robot: Features
 
