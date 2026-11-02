@@ -2,7 +2,7 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
@@ -40,11 +40,15 @@ def generate_launch_description():
 		parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}]
 	)
 
-	keyboard_node = Node(
-		package='teleop_twist_keyboard',
-		executable='teleop_twist_keyboard',
-		name='teleop_twist_keyboard',
-		remappings=[('cmd_vel', '/key_vel')],
+	keyboard_node = ExecuteProcess(
+		cmd=[
+			'gnome-terminal',
+			'--',
+			'bash',
+			'-lc',
+			'ros2 run teleop_twist_keyboard teleop_twist_keyboard '
+			'--ros-args -r cmd_vel:=/key_vel; exec bash',
+		],
 		output='screen',
 	)
 

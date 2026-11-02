@@ -47,11 +47,11 @@ def generate_launch_description():
         }.items(),
     )
     
-    joystick = IncludeLaunchDescription(
+    keyboard_teleop = IncludeLaunchDescription(
         os.path.join(
             get_package_share_directory("bumperbot_controller"),
             "launch",
-            "joystick_teleop.launch.py"
+            "keyboard_teleop.launch.py"
         ),
         launch_arguments={
             "use_sim_time": "False"
@@ -94,7 +94,7 @@ def generate_launch_description():
         hardware_interface,
         laser_driver,
         controller,
-        joystick,
+        keyboard_teleop,
         imu_driver_node,
         localization,
         slam,

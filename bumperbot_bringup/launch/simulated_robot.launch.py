@@ -92,6 +92,6 @@ def generate_launch_description():
         keyboard_teleop,
         localization,
         slam,
-        navigation,
+        # navigation,
         rviz,
     ])
