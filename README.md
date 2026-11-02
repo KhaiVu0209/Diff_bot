@@ -1,8 +1,5 @@
 
 
-<p align="center">
-  <img src="media/BumperBot.png" alt="Logo" width="450">
-</p>
 
 ## :robot: Features
 
