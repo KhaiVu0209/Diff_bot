@@ -16,6 +16,8 @@
 
   <link name="base_footprint"/>
   
+
+  <!-- Base Link -->
   <link name="base_link">
     <inertial>
       <origin xyz="0 0 0.04" rpy="0.0 0.25 0.3" />
@@ -45,6 +47,8 @@
     <origin xyz="0 0 0.033" rpy="0 0 0"/>
   </joint>
 
+
+  <!-- Banh Phai-->
   <link name="wheel_right_link">
     <inertial>
       <origin xyz="0 -0.014 0" rpy="0 0 0" />
@@ -75,8 +79,9 @@
     <axis xyz="0 1 0" />
   </joint>
   
-  <link
-    name="wheel_left_link">
+
+  <!-- Banh Trai -->
+  <link name="wheel_left_link">
     <inertial>
       <origin xyz="0 0.014 0" rpy="0 0 0" />
       <mass value="0.0530086043217644" />
@@ -106,6 +111,7 @@
     <axis xyz="0 1 0" />
   </joint>
 
+  <!-- Banh Phu Truoc-->
   <link name="caster_front_link">
     <inertial>
       <origin xyz="3.89968128948481E-07 2.40073004698083E-07 0.00219173397061506" rpy="0 0 0" />
@@ -136,6 +142,7 @@
     <axis xyz="0 0 0" />
   </joint>
   
+  <!-- Banh Phu Sau-->
   <link name="caster_rear_link">
     <inertial>
       <origin xyz="3.8996812895542E-07 2.40073004698083E-07 0.00219173397061509" rpy="0 0 0" />
@@ -166,6 +173,7 @@
     <axis xyz="0 0 0" />
   </joint>
 
+  <!-- Cam bien IMU -->
   <link name="imu_link">
     <inertial>
       <origin xyz="-0.00552433659106688 0.000168210391520346 0.000514000497342681" rpy="0 0 0" />
@@ -196,6 +204,8 @@
     <axis xyz="0 0 0" />
   </joint>
 
+
+  <!-- Cam bien Lidar-->
   <link name="laser_link">
     <inertial>
       <origin xyz="-0.011945780406062 -0.000381929217680526 -0.0170649378129477" rpy="0 0 0" />

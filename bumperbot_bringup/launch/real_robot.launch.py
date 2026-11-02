@@ -23,17 +23,21 @@ def generate_launch_description():
         ),
     )
 
-    laser_driver = Node(
-            package="rplidar_ros",
-            executable="rplidar_node",
-            name="rplidar_node",
-            parameters=[os.path.join(
+    laser_driver = IncludeLaunchDescription(
+        os.path.join(
+            get_package_share_directory("ydlidar_ros2_driver"),
+            "launch",
+            "ydlidar_launch.py"
+        ),
+        launch_arguments={
+            "params_file": os.path.join(
                 get_package_share_directory("bumperbot_bringup"),
                 "config",
-                "rplidar_a1.yaml"
-            )],
-            output="screen"
+                "ydlidar_x3.yaml"
+            )
+        }.items(),
     )
+
     
     controller = IncludeLaunchDescription(
         os.path.join(
@@ -98,5 +102,5 @@ def generate_launch_description():
         imu_driver_node,
         localization,
         slam,
-        navigation
+        # navigation
     ])
