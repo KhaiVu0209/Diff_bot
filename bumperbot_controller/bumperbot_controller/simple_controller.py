@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import rclpy #  Thu vien ROS2 Python
+import rclpy #  Thu vien ROS2 
 from rclpy.node import Node # Thu vien tao mot ROS2 Node 
 from rclpy.constants import S_TO_NS # Chuyen doi second sang nanosecond
 from rclpy.time import Time # Xu ly thoi gian trong ROS2 
@@ -44,22 +44,22 @@ class SimpleController(Node):
                                            [self.wheel_radius_/self.wheel_separation_, -self.wheel_radius_/self.wheel_separation_]])
         self.get_logger().info("The conversion matrix is %s" % self.speed_conversion_) 
 
-        # # Fill the Odometry message with invariant parameters
-        # self.odom_msg_ = Odometry()
-        # self.odom_msg_.header.frame_id = "odom"
-        # self.odom_msg_.child_frame_id = "base_footprint"
-        # self.odom_msg_.pose.pose.orientation.x = 0.0
-        # self.odom_msg_.pose.pose.orientation.y = 0.0
-        # self.odom_msg_.pose.pose.orientation.z = 0.0
-        # self.odom_msg_.pose.pose.orientation.w = 1.0
+        # Fill the Odometry message with invariant parameters
+        self.odom_msg_ = Odometry()
+        self.odom_msg_.header.frame_id = "odom"
+        self.odom_msg_.child_frame_id = "base_footprint"
+        self.odom_msg_.pose.pose.orientation.x = 0.0
+        self.odom_msg_.pose.pose.orientation.y = 0.0
+        self.odom_msg_.pose.pose.orientation.z = 0.0
+        self.odom_msg_.pose.pose.orientation.w = 1.0
 
-        # # Fill the TF message
-        # self.br_ = TransformBroadcaster(self)
-        # self.transform_stamped_ = TransformStamped()
-        # self.transform_stamped_.header.frame_id = "odom"
-        # self.transform_stamped_.child_frame_id = "base_footprint"
+        # Fill the TF message
+        self.br_ = TransformBroadcaster(self)
+        self.transform_stamped_ = TransformStamped()
+        self.transform_stamped_.header.frame_id = "odom"
+        self.transform_stamped_.child_frame_id = "base_footprint"
 
-        # self.prev_time_ = self.get_clock().now()
+        self.prev_time_ = self.get_clock().now()
 
 
     def velCallback(self, msg):
@@ -91,12 +91,14 @@ class SimpleController(Node):
         self.prev_time_ = Time.from_msg(msg.header.stamp) # Thoi gian hien tai luu vao bien luu tru
 
         # Calculate the rotational speed of each wheel (Tinh van toc goc quay cua moi banh xe)
+        # Transform nanoseconds to seconds
         fi_left = dp_left / (dt.nanoseconds / S_TO_NS) # Van toc goc quay banh trai
-        fi_right = dp_right / (dt.nanoseconds / S_TO_NS) # Van toc goc quay banh phai
+        fi_right = dp_right / (dt.nanoseconds / S_TO_NS) # Van toc goc quay banh phai (rad/s)
 
-        # Calculate the linear and angular velocity (Linear velocity and angular velocity )
-        linear = (self.wheel_radius_ * fi_right + self.wheel_radius_ * fi_left) / 2
-        angular = (self.wheel_radius_ * fi_right - self.wheel_radius_ * fi_left) / self.wheel_separation_
+        # Calculate the linear and angular velocity
+        linear = (self.wheel_radius_ * fi_right + self.wheel_radius_ * fi_left) / 2   # Linear velocity
+        angular = (self.wheel_radius_ * fi_right - self.wheel_radius_ * fi_left) / self.wheel_separation_  # Angular velocity 
+        self.get_logger().info(f"Linear velocity is {linear} m/s, angular velocity is {angular} rad/s")
 
         # Calculate the position increment ()
         d_s = (self.wheel_radius_ * dp_right + self.wheel_radius_ * dp_left) / 2
