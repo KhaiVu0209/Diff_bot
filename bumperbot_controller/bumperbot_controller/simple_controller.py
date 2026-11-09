@@ -30,6 +30,7 @@ class SimpleController(Node):
         # State variables ( Bien trang thai cua robot)
         self.left_wheel_prev_pos_ = 0.0 # Vi tri góc quay bánh trái ở lần đọc trước
         self.right_wheel_prev_pos_ = 0.0 # Vi tri góc quay bánh phải ở lần đọc trước
+
         self.x_ = 0.0
         self.y_ = 0.0
         self.theta_ = 0.0
@@ -37,29 +38,30 @@ class SimpleController(Node):
         # Publishers and Subscribers ( Ket noi Node voi he thong ROS2)
         self.wheel_cmd_pub_ = self.create_publisher(Float64MultiArray, "simple_velocity_controller/commands", 10)
         self.vel_sub_ = self.create_subscription(Twist, "bumperbot_controller/cmd_vel_unstamped", self.velCallback, 10)
-        self.joint_sub_ = self.create_subscription(JointState,"joint_states", self.jointCallback, 10)  #   Tinh     
+        self.joint_sub_ = self.create_subscription(JointState,"joint_states", self.jointCallback, 10)  #      
         self.odom_pub_ = self.create_publisher(Odometry, "bumperbot_controller/odom", 10) # Xuat odometry 
 
         self.speed_conversion_ = np.array([[self.wheel_radius_/2, self.wheel_radius_/2],
                                            [self.wheel_radius_/self.wheel_separation_, -self.wheel_radius_/self.wheel_separation_]])
+        
         self.get_logger().info("The conversion matrix is %s" % self.speed_conversion_) 
 
         # Fill the Odometry message with invariant parameters
-        self.odom_msg_ = Odometry()
-        self.odom_msg_.header.frame_id = "odom"
-        self.odom_msg_.child_frame_id = "base_footprint"
-        self.odom_msg_.pose.pose.orientation.x = 0.0
-        self.odom_msg_.pose.pose.orientation.y = 0.0
-        self.odom_msg_.pose.pose.orientation.z = 0.0
-        self.odom_msg_.pose.pose.orientation.w = 1.0
+        # self.odom_msg_ = Odometry()
+        # self.odom_msg_.header.frame_id = "odom"
+        # self.odom_msg_.child_frame_id = "base_footprint"
+        # self.odom_msg_.pose.pose.orientation.x = 0.0
+        # self.odom_msg_.pose.pose.orientation.y = 0.0
+        # self.odom_msg_.pose.pose.orientation.z = 0.0
+        # self.odom_msg_.pose.pose.orientation.w = 1.0
 
-        # Fill the TF message
-        self.br_ = TransformBroadcaster(self)
-        self.transform_stamped_ = TransformStamped()
-        self.transform_stamped_.header.frame_id = "odom"
-        self.transform_stamped_.child_frame_id = "base_footprint"
+        # # Fill the TF message
+        # self.br_ = TransformBroadcaster(self)
+        # self.transform_stamped_ = TransformStamped()
+        # self.transform_stamped_.header.frame_id = "odom"
+        # self.transform_stamped_.child_frame_id = "base_footprint"
 
-        self.prev_time_ = self.get_clock().now()
+        # self.prev_time_ = self.get_clock().now()
 
 
     def velCallback(self, msg):
@@ -100,35 +102,45 @@ class SimpleController(Node):
         angular = (self.wheel_radius_ * fi_right - self.wheel_radius_ * fi_left) / self.wheel_separation_  # Angular velocity 
         self.get_logger().info(f"Linear velocity is {linear} m/s, angular velocity is {angular} rad/s")
 
-        # Calculate the position increment ()
-        d_s = (self.wheel_radius_ * dp_right + self.wheel_radius_ * dp_left) / 2
-        d_theta = (self.wheel_radius_ * dp_right - self.wheel_radius_ * dp_left) / self.wheel_separation_
-        self.theta_ += d_theta
+        # Calculate the position increment 
+        d_s = (
+            self.wheel_radius_ * dp_right
+            + self.wheel_radius_ * dp_left
+        ) / 2
+
+        # Calculate the orientation increment
+        d_theta = (
+            self.wheel_radius_ * dp_right
+            - self.wheel_radius_ * dp_left
+        ) / self.wheel_separation_
+
+        # Update the position and orientation 
+        self.theta_ += d_theta #
         self.x_ += d_s * math.cos(self.theta_)
-        self.y_ += d_s * math.sin(self.theta_)
+        self.y_ += d_s * math.sin(self.theta_) 
         
         # Compose and publish the odom message
-        q = quaternion_from_euler(0, 0, self.theta_)
-        self.odom_msg_.header.stamp = self.get_clock().now().to_msg()
-        self.odom_msg_.pose.pose.position.x = self.x_
-        self.odom_msg_.pose.pose.position.y = self.y_
-        self.odom_msg_.pose.pose.orientation.x = q[0]
-        self.odom_msg_.pose.pose.orientation.y = q[1]
-        self.odom_msg_.pose.pose.orientation.z = q[2]
-        self.odom_msg_.pose.pose.orientation.w = q[3]
-        self.odom_msg_.twist.twist.linear.x = linear
-        self.odom_msg_.twist.twist.angular.z = angular
-        self.odom_pub_.publish(self.odom_msg_)
+        # q = quaternion_from_euler(0, 0, self.theta_)
+        # self.odom_msg_.header.stamp = self.get_clock().now().to_msg()
+        # self.odom_msg_.pose.pose.position.x = self.x_
+        # self.odom_msg_.pose.pose.position.y = self.y_
+        # self.odom_msg_.pose.pose.orientation.x = q[0]
+        # self.odom_msg_.pose.pose.orientation.y = q[1]
+        # self.odom_msg_.pose.pose.orientation.z = q[2]
+        # self.odom_msg_.pose.pose.orientation.w = q[3]
+        # self.odom_msg_.twist.twist.linear.x = linear
+        # self.odom_msg_.twist.twist.angular.z = angular
+        # self.odom_pub_.publish(self.odom_msg_)
 
-        # TF
-        self.transform_stamped_.transform.translation.x = self.x_
-        self.transform_stamped_.transform.translation.y = self.y_
-        self.transform_stamped_.transform.rotation.x = q[0]
-        self.transform_stamped_.transform.rotation.y = q[1]
-        self.transform_stamped_.transform.rotation.z = q[2]
-        self.transform_stamped_.transform.rotation.w = q[3]
-        self.transform_stamped_.header.stamp = self.get_clock().now().to_msg()
-        self.br_.sendTransform(self.transform_stamped_)
+        # # TF
+        # self.transform_stamped_.transform.translation.x = self.x_
+        # self.transform_stamped_.transform.translation.y = self.y_
+        # self.transform_stamped_.transform.rotation.x = q[0]
+        # self.transform_stamped_.transform.rotation.y = q[1]
+        # self.transform_stamped_.transform.rotation.z = q[2]
+        # self.transform_stamped_.transform.rotation.w = q[3]
+        # self.transform_stamped_.header.stamp = self.get_clock().now().to_msg()
+        # self.br_.sendTransform(self.transform_stamped_)
 
 
 def main():
