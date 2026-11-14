@@ -4,13 +4,13 @@ import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
 
-
+# Node có nhiệm vụ nhận data tu Nano gui len 
 class SimpleSerialReceiver(Node):
     def __init__(self):
         super().__init__("simple_serial_receiver")
 
         self.declare_parameter("port", "/dev/ttyUSB0")
-        self.declare_parameter("baudrate", 115200)
+        self.declare_parameter("baudrate", 115200) ##Toc do truyen nhan 115200 bit/s
 
         self.port_ = self.get_parameter("port").value
         self.baudrate_ = self.get_parameter("baudrate").value

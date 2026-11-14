@@ -1,3 +1,4 @@
+//Chương trình chạy trên Arduino, nhận dữ liệu Serial và điều khiển LED dựa trên dữ liệu nhận được.
 #define LED_PIN 13
 
 
@@ -11,10 +12,11 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  if(Serial.available())
+  if(Serial.available()) // Hàm Serial.available() kiểm tra xem có bao nhiêu byte dữ liệu đang chờ được đọc trong bộ đệm Serial.
   {
     /// turn on 
-    int x = Serial.readString().toInt();
+    int x = Serial.readString().toInt(); // Serial.readString(): Đọc dữ liệu Serial thành một đối tượng String.
+                                         // toInt(): Chuyển đổi đối tượng String thành int
     if(x == 0){
     digitalWrite(LED_PIN, LOW);
   } // turn off

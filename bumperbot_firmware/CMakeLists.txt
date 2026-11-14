@@ -7,6 +7,7 @@ endif()
 
 
 find_package(ament_cmake REQUIRED)
+# For Python modules
 find_package(ament_cmake_python REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclpy REQUIRED)
