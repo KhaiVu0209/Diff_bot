@@ -19,13 +19,13 @@ class SimpleController(Node):
     def __init__(self):
         super().__init__("simple_controller") # Init node ROS2 ten la "simple_controller"
         self.declare_parameter("wheel_radius", 0.033) # Radius 
-        self.declare_parameter("wheel_separation", 0.17) # Khoang cach giua 2 banh xe
+        self.declare_parameter("wheel_separation", 0.197) # Khoang cach giua 2 banh xe
 
         self.wheel_radius_ = self.get_parameter("wheel_radius").get_parameter_value().double_value 
         self.wheel_separation_ = self.get_parameter("wheel_separation").get_parameter_value().double_value
 
-        self.get_logger().info("Using wheel radius %d" % self.wheel_radius_)
-        self.get_logger().info("Using wheel separation %d" % self.wheel_separation_)
+        self.get_logger().info("Using wheel radius %f" % self.wheel_radius_)
+        self.get_logger().info("Using wheel separation %f" % self.wheel_separation_)
 
         # State variables ( Bien trang thai cua robot)
         self.left_wheel_prev_pos_ = 0.0 # Vi tri góc quay bánh trái ở lần đọc trước

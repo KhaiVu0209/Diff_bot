@@ -18,12 +18,12 @@ class SimpleSerialReceiver(Node):
         self.pub_ = self.create_publisher(String, "serial_receiver", 10)
         self.arduino_ = serial.Serial(port=self.port_, baudrate=self.baudrate_, timeout=0.1)
 
-        self.frequency_ = 0.01
+        self.frequency_ = 0.01 # 100hz
         self.timer_ = self.create_timer(self.frequency_, self.timerCallback)
 
     def timerCallback(self):
         if rclpy.ok() and self.arduino_.is_open:
-            data = self.arduino_.readline()
+            data = self.arduino_.readline() # read data tu Serial 
 
             try:
                 data.decode("utf-8")

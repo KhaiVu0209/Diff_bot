@@ -4,7 +4,7 @@ from rclpy.node import Node
 from std_msgs.msg import String
 import serial # Thu vien giao tiep qua Serial
 
-#Node ROS 2 có nhiệm vụ nhận dữ liệu từ Topic và truyền xuống Arduino qua Serial.
+# Node có nhiệm vụ nhận dữ liệu từ Topic và truyền xuống Arduino qua Serial.
 class Simple_Serial_Transmitter(Node):
     def __init__(self):
         super().__init__("simple_serial_transmitter")
